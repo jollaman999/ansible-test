@@ -10,4 +10,6 @@ RUN apk add sudo
 RUN apk add openssh
 RUN apk add iproute2
 
+RUN echo "semaphore ALL = NOPASSWD: ALL" >> /etc/sudoers
+
 USER semaphore

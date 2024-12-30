@@ -8,12 +8,16 @@
   delegate_to: localhost
 
 - name: Execute commands
+  become: yes
+  become_method: sudo
+  become_user: root
   vars:
     ansible_connection: ssh
     ansible_host: localhost
     ansible_port: "{{ tunnel_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
   raw: "{{ item }}"
   register: result
   loop: "{{ script_content.stdout_lines | reject('match', '^\\s*$') | reject('match', '^\\s*#') | list }}"
