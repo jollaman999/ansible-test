@@ -1,6 +1,6 @@
 - name: Kill previous tunnel port
   shell: |
-    pkill -f "ssh.*{{ tunnel_port }}:{{ target_host }}:22.*{{ bastion_host }}" || true
+    pkill -f "ssh.*{{ tunnel_port }}:{{ target_host }}:{{ target_port }}.*{{ bastion_host }}" || true
   ignore_errors: true
   delegate_to: localhost
 
