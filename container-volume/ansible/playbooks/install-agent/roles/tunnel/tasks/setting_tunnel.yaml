@@ -10,7 +10,6 @@
   delegate_to: localhost
   async: 300
   poll: 0
-  no_log: true
 
 - name: Check tunnel status
   wait_for:
