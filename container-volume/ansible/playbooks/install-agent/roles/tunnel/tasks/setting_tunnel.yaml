@@ -1,11 +1,11 @@
 - name: Kill previous tunnel port
-  raw: |
+  shell: |
     pkill -f "ssh.*{{ tunnel_port }}:{{ target_host }}:{{ target_port }}.*{{ bastion_host }}" || true
   ignore_errors: true
   delegate_to: localhost
 
 - name: Setting SSH tunnel
-  raw: |
+  shell: |
     sshpass -p '{{ bastion_password }}' ssh -4 -fnNT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -L {{ tunnel_port }}:{{ target_host }}:{{ target_port }} -p {{ bastion_port }} {{ bastion_user }}@{{ bastion_host }}
   delegate_to: localhost
   async: 300
