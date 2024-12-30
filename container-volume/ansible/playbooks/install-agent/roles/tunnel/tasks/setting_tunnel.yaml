@@ -6,7 +6,7 @@
 
 - name: Setting SSH tunnel
   raw: |
-    sshpass -p '{{ bastion_password }}' ssh -fnNT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -L {{ tunnel_port }}:{{ target_host }}:{{ target_port }} -p {{ bastion_port }} {{ bastion_user }}@{{ bastion_host }}
+    sshpass -p '{{ bastion_password }}' ssh -4 -fnNT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -L {{ tunnel_port }}:{{ target_host }}:{{ target_port }} -p {{ bastion_port }} {{ bastion_user }}@{{ bastion_host }}
   delegate_to: localhost
   async: 300
   poll: 0

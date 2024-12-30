@@ -12,7 +12,9 @@ services:
       - ansible-network
 
   semaphore:
-    image: semaphoreui/semaphore:v2.11.2
+    build:
+      context: .
+      dockerfile: Dockerfile.semaphore
     container_name: semaphore
     restart: always
     ports:
