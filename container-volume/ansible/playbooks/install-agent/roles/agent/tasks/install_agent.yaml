@@ -1,0 +1,37 @@
+- name: Generate run.sh
+  raw: "{{ role_path }}/bin/bin2base64 -input {{ role_path }}/agent/{{ agent_filename }} -output {{ role_path }}/run.sh"
+  delegate_to: localhost
+
+- name: Read generated script
+  raw: cat "{{ role_path }}/run.sh"
+  register: script_content
+  delegate_to: localhost
+
+- name: Execute commands
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+  raw: "{{ item }}"
+  register: result
+  loop: "{{ script_content.stdout_lines | reject('match', '^\\s*$') | reject('match', '^\\s*#') | list }}"
+  when: item | trim != ""
+  no_log: "{{ 'base64 -d' in item }}"
+
+- name: Show execution results
+  debug:
+    msg: 
+      - "Command: {{ item.item }}"
+      - "stdout: {{ item.stdout }}"
+      - "stderr: {{ item.stderr }}"
+  loop: "{{ result.results }}"
+  when: item is defined and item.item | trim != "" and not (item.item | regex_search('^echo'))
+  no_log: "{{ 'base64 -d' in item.item }}"
+
+- name: Remove temporary script
+  ansible.builtin.file:
+    path: "{{ role_path }}/run.sh"
+    state: absent
+  delegate_to: localhost

@@ -1,0 +1,14 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Check variables
+      include_role:
+        name: check
+
+    - name: Setup SSH Tunnel
+      include_role:
+        name: tunnel
+
+    - name: Install Agent
+      include_role:
+        name: agent

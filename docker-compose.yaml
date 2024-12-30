@@ -1,0 +1,54 @@
+services:
+  ansible-controller:
+    build:
+      context: .
+      dockerfile: Dockerfile.ansible
+    container_name: ansible-controller
+    restart: always
+    volumes:
+      - ./container-volume/ansible/playbooks:/ansible/playbooks
+      - ./container-volume/ansible/inventory:/ansible/inventory
+    networks:
+      - ansible-network
+
+  semaphore:
+    image: semaphoreui/semaphore:v2.11.2
+    container_name: semaphore
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      SEMAPHORE_DB_DIALECT: mysql
+      SEMAPHORE_DB_HOST: semaphore-db
+      SEMAPHORE_DB_NAME: semaphore
+      SEMAPHORE_DB_USER: semaphore
+      SEMAPHORE_DB_PASS: semaphorepass
+      SEMAPHORE_ADMIN: admin
+      SEMAPHORE_ADMIN_PASSWORD: semaphorepass
+      SEMAPHORE_ADMIN_NAME: ish
+      SEMAPHORE_ADMIN_EMAIL: ish@innogrid.com
+      ANSIBLE_HOST_KEY_CHECKING: False
+    volumes:
+      - ./data/semaphore:/var/lib/semaphore
+    networks:
+      - ansible-network
+    depends_on:
+      - semaphore-db
+
+  semaphore-db:
+    image: mariadb:11.6
+    container_name: semaphore-db
+    restart: always
+    environment:
+      MARIADB_USER: semaphore
+      MARIADB_PASSWORD: semaphorepass
+      MARIADB_DATABASE: semaphore
+      MARIADB_ROOT_PASSWORD: semaphorepass
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    networks:
+      - ansible-network
+
+networks:
+  ansible-network:
+    name: ansible-network

@@ -1,0 +1,28 @@
+FROM ubuntu:22.04
+
+RUN sed -i 's@archive.ubuntu.com@mirror.kakao.com@g' /etc/apt/sources.list
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Seoul
+
+RUN apt-get update && apt-get install -y \
+    ansible \
+    openssh-client \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install ansible-runner ansible-runner-http
+
+RUN mkdir -p /ansible/playbooks /ansible/inventory /root/.ssh
+
+COPY ansible.cfg /ansible/ansible.cfg
+
+COPY ssh_config /root/.ssh/config
+
+RUN chmod 700 /root/.ssh && \
+    chmod 600 /root/.ssh/config
+
+WORKDIR /ansible
+
+CMD ["tail", "-f", "/dev/null"]

@@ -1,0 +1,13 @@
+- name: Check required variables
+  fail: 
+    msg: "Required variable not found: {{ item }}"
+  when: vars[item] is not defined or vars[item] == ''
+  loop:
+    - bastion_host
+    - bastion_port
+    - bastion_user
+    - bastion_password
+    - target_host
+    - target_user
+    - target_password
+    - tunnel_port
