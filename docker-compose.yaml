@@ -1,16 +1,4 @@
 services:
-  ansible-controller:
-    build:
-      context: .
-      dockerfile: Dockerfile.ansible
-    container_name: ansible-controller
-    restart: always
-    volumes:
-      - ./container-volume/ansible/playbooks:/ansible/playbooks
-      - ./container-volume/ansible/inventory:/ansible/inventory
-    networks:
-      - ansible-network
-
   semaphore:
     build:
       context: .

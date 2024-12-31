@@ -1,8 +1,0 @@
-Host *
-    StrictHostKeyChecking no
-    UserKnownHostsFile /dev/null
-    ServerAliveInterval 60
-    ServerAliveCountMax 10
-    ControlMaster auto
-    ControlPath ~/.ssh/control-%h-%p-%r
-    ControlPersist 10m
