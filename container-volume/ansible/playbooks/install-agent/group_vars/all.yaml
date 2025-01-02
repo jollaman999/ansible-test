@@ -7,4 +7,3 @@ target_port: 22
 target_user: "root"
 target_password: "xxx"
 tunnel_port: 30000
-agent_filename: hello_world

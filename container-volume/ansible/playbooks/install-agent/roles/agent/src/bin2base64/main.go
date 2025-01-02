@@ -38,9 +38,14 @@ func writeScriptContent(outFile *os.File, inputFile *os.File, executableName str
 		return fmt.Errorf("failed to write shebang: %v", err)
 	}
 
+	if _, err :=outFile.WriteString("cd\n\n"); err != nil {
+		return fmt.Errorf("failed to write cd command: %v", err)
+	}
+
 	buffer := make([]byte, chunkSize)
 	isFirst := true
 
+	
 	for {
 		n, err := inputFile.Read(buffer)
 		if err == io.EOF {
@@ -68,13 +73,6 @@ func writeScriptContent(outFile *os.File, inputFile *os.File, executableName str
 				return fmt.Errorf("failed to write to output file: %v", err)
 			}
 		}
-	}
-
-	if _, err := fmt.Fprintf(outFile, "chmod +x %s\n", executableName); err != nil {
-		return fmt.Errorf("failed to write chmod command: %v", err)
-	}
-	if _, err := fmt.Fprintf(outFile, "./%s\n", executableName); err != nil {
-		return fmt.Errorf("failed to write execution command: %v", err)
 	}
 
 	return nil

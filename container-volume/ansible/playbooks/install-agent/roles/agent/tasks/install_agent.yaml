@@ -1,14 +1,21 @@
-- name: Generate run.sh
-  raw: "{{ role_path }}/bin/bin2base64 -input {{ role_path }}/agent/{{ agent_filename }} -output {{ role_path }}/run.sh"
-  delegate_to: localhost
+- name: Copy Agent binary
+  include_tasks: send_file.yaml
+  vars:
+    input_file_path: "{{ role_path }}/agent-install-files/bin/cmp-agent"
+    output_file_path: "/usr/bin/cmp-agent"
+    output_file_chown: "root:root"
+    output_file_chmod: "755"
 
-- name: Read generated script
-  raw: cat "{{ role_path }}/run.sh"
-  register: script_content
-  delegate_to: localhost
+- name: Copy Agent service file
+  include_tasks: send_file.yaml
+  vars:
+    input_file_path: "{{ role_path }}/agent-install-files/systemd/cmp-agent.service"
+    output_file_path: "/lib/systemd/system/cmp-agent.service"
+    output_file_chown: "root:root"
+    output_file_chmod: "644"
 
-- name: Execute commands
-  become: yes
+- name: Reload systemctl daemon
+  become: true
   become_method: sudo
   become_user: root
   vars:
@@ -18,24 +25,17 @@
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
-  raw: "{{ item }}"
-  register: result
-  loop: "{{ script_content.stdout_lines | reject('match', '^\\s*$') | reject('match', '^\\s*#') | list }}"
-  when: item | trim != ""
-  no_log: "{{ 'base64 -d' in item }}"
+  raw: "systemctl daemon-reload"
 
-- name: Show execution results
-  debug:
-    msg: 
-      - "Command: {{ item.item }}"
-      - "stdout: {{ item.stdout }}"
-      - "stderr: {{ item.stderr }}"
-  loop: "{{ result.results }}"
-  when: item is defined and item.item | trim != "" and not (item.item | regex_search('^echo'))
-  no_log: "{{ 'base64 -d' in item.item }}"
-
-- name: Remove temporary script
-  ansible.builtin.file:
-    path: "{{ role_path }}/run.sh"
-    state: absent
-  delegate_to: localhost
+- name: Restart Agent service
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl restart cmp-agent"

@@ -1,0 +1,15 @@
+[Unit]
+Description=CMP Agent Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/cmp-agent
+ExecStop=/usr/bin/killall cmp-agent
+Restart=on-failure
+RestartPreventExitStatus=100
+
+[Install]
+WantedBy=multi-user.target
+Alias=cmp-agent.service
