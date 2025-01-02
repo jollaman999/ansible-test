@@ -1,9 +1,9 @@
 bastion_host: "192.168.110.229"
 bastion_port: 22
 bastion_user: "root"
-bastion_password: "xxxx"
+bastion_password: "qwe1212!Q"
 target_host: "10.0.0.164"
 target_port: 22
 target_user: "root"
-target_password: "xxx"
+target_password: "qwe1212!Q"
 tunnel_port: 30000
