@@ -1,0 +1,13 @@
+services:
+  tunnel-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tunnel-manager:0.0.1
+    container_name: tunnel-manager
+    restart: always
+    environment:
+      SERVICE_IP: $SERVICE_IP
+    volumes:
+      - ./container-volume/tunnel-manager:/etc/tunnel-manager/
+    network_mode: bridge
