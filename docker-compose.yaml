@@ -19,6 +19,7 @@ services:
       SEMAPHORE_ADMIN_EMAIL: ish@innogrid.com
       ANSIBLE_HOST_KEY_CHECKING: False
     volumes:
+      - ./container-volume/ansible:/ansible
       - ./data/semaphore:/var/lib/semaphore
     networks:
       - ansible-network
