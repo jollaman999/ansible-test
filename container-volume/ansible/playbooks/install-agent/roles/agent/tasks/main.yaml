@@ -1,1 +1,2 @@
-- import_tasks: install_agent.yaml
+- name: Run Agent task based on install method
+  include_tasks: "agent_{{ install_method | default('install') }}.yaml"

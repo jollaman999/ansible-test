@@ -40,7 +40,7 @@
     ansible_become_password: "{{ target_password }}"
   raw: "systemctl restart cmp-agent"
 
-- name: Show Agent status
+- name: Run Agent status command
   become: true
   become_method: sudo
   become_user: root
@@ -53,6 +53,7 @@
     ansible_become_password: "{{ target_password }}"
   raw: "systemctl status --no-pager cmp-agent"
   register: agent_status
+  failed_when: agent_status.rc not in [0, 3]
 
 - name: Display Agent status
   debug:

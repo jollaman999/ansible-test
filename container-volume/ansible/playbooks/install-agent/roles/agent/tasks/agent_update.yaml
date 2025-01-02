@@ -1,0 +1,97 @@
+- name: Stop Agent service
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl stop cmp-agent"
+
+- name: Run Agent status command
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl status --no-pager cmp-agent"
+  register: agent_status
+  failed_when: agent_status.rc not in [0, 3]
+
+- name: Display Agent status
+  debug:
+    var: agent_status
+
+- name: Remove Agent binary
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "rm -f /usr/bin/cmp-agent"
+
+- name: Copy Agent binary
+  include_tasks: send_file.yaml
+  vars:
+    input_file_path: "{{ role_path }}/agent-install-files/bin/cmp-agent"
+    output_file_path: "/usr/bin/cmp-agent"
+    output_file_chown: "root:root"
+    output_file_chmod: "755"
+
+- name: Reload systemctl daemon
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl daemon-reload"
+
+- name: Restart Agent service
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl restart cmp-agent"
+
+- name: Run Agent status command
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: localhost
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl status --no-pager cmp-agent"
+  register: agent_status
+  failed_when: agent_status.rc not in [0, 3]
+
+- name: Display Agent status
+  debug:
+    var: agent_status

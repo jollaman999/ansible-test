@@ -1,5 +1,7 @@
 - hosts: localhost
   gather_facts: no
+  vars:
+    install_method: "{{ install_method | default('install') }}"
   tasks:
     - name: Check variables
       include_role:
@@ -9,6 +11,6 @@
       include_role:
         name: tunnel
 
-    - name: Install Agent
+    - name: Agent Operation
       include_role:
         name: agent
