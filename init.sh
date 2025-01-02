@@ -1,21 +1,30 @@
 #!/bin/bash
 
-# Login
-HTTP_STATUS=$(curl -s -w "%{http_code}" -c semaphore-cookie -XPOST \
--H 'Content-Type: application/json' \
--H 'Accept: application/json' \
--d '{"auth": "admin", "password": "semaphorepass"}' \
--o /dev/null \
-http://127.0.0.1:3000/api/auth/login)
+docker compose up -d
 
-if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
- echo "[!] ERROR: Failed to login! Status code: $HTTP_STATUS"
- exit 1
-fi
+echo "[*] Logging in to semaphore..."
+cnt=0
+while true
+do
+   (( cnt = "$cnt" + 1 ))
+    HTTP_STATUS=$(curl -s -w "%{http_code}" -c semaphore-cookie -XPOST \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -d '{"auth": "admin", "password": "semaphorepass"}' \
+    -o /dev/null \
+    http://127.0.0.1:3000/api/auth/login)
+   if [[ $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
+      break
+   fi
+   if [ "$cnt" = "30" ]; then
+      echo "[!] Failed to login to Semaphore."
+      exit 1;
+   fi
+   sleep 1
+done
+echo "[*] Successfully logged in to Semaphore!"
 
-sleep 3
-
-# Create token
+echo "[*] Creating token..."
 RESPONSE=$(curl -s -w "\n%{http_code}" -b semaphore-cookie -XPOST \
 -H 'Content-Type: application/json' \
 -H 'Accept: application/json' \
@@ -35,9 +44,7 @@ if [ "$TOKEN_ID" = "" ]; then
  exit 1
 fi
 
-sleep 3
-
-# Create project
+echo "[*] Creating project..."
 HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  'http://127.0.0.1:3000/api/projects' \
  -H 'accept: application/json' \
@@ -51,9 +58,7 @@ if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
  exit 1
 fi
 
-sleep 3
-
-# Create inventory
+echo "[*] Creating inventory..."
 HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  'http://127.0.0.1:3000/api/project/1/inventory' \
  -H 'accept: application/json' \
@@ -67,9 +72,7 @@ if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
  exit 1
 fi
 
-sleep 3
-
-# Create task
+echo "[*] Creating repository..."
 HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  'http://127.0.0.1:3000/api/project/1/repositories' \
  -H 'accept: application/json' \
@@ -83,9 +86,7 @@ if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
  exit 1
 fi
 
-sleep 3
-
-# Create template
+echo "[*] Creating template..."
 HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  'http://127.0.0.1:3000/api/project/1/templates' \
  -H 'accept: application/json' \
@@ -99,9 +100,7 @@ if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
  exit 1
 fi
 
-sleep 3
-
-# Delete token
+echo "[*] Deleting token..."
 HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'DELETE' \
  "http://127.0.0.1:3000/api/user/tokens/$TOKEN_ID" \
  -H 'accept: application/json' \
@@ -114,5 +113,5 @@ if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
  exit 1
 fi
 
-sleep 3
+echo "[*] Deleting cookie..."
 rm -f semaphore-cookie
