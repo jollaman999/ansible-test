@@ -24,16 +24,6 @@
   when: item | trim != ""
   no_log: "{{ 'base64 -d' in item }}"
 
-- name: Show execution results
-  debug:
-    msg: 
-      - "Command: {{ item.item }}"
-      - "stdout: {{ item.stdout }}"
-      - "stderr: {{ item.stderr }}"
-  loop: "{{ result.results }}"
-  when: item is defined and item.item | trim != "" and not (item.item | regex_search('^echo'))
-  no_log: "{{ 'base64 -d' in item.item }}"
-
 - name: Remove temporary script
   ansible.builtin.file:
     path: "{{ role_path }}/run.sh"
