@@ -23,6 +23,7 @@
   loop: "{{ script_content.stdout_lines | reject('match', '^\\s*$') | reject('match', '^\\s*#') | list }}"
   when: item | trim != ""
   no_log: "{{ 'base64 -d' in item }}"
+  ignore_errors: true
 
 - name: Remove temporary script
   ansible.builtin.file:
