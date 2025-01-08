@@ -72,9 +72,9 @@
     ansible_password: "{{ bastion_password }}"
     ansible_become_password: "{{ bastion_password }}"
   raw: "systemctl status --no-pager tunnel-manager"
-  register: tunnel-manager_status
+  register: tunnel_manager_status
   failed_when: tunnel-manager_status.rc not in [0, 3]
 
-- name: Display tunnel-manager status
+- name: Display tunnel_manager status
   debug:
     var: tunnel-manager_status
