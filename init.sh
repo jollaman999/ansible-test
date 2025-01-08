@@ -64,7 +64,7 @@ HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  -H 'accept: application/json' \
  -H 'Content-Type: application/json' \
  -H "Authorization: Bearer $TOKEN_ID" \
- -d '{"name":"all","ssh_key_id":1,"type":"static","inventory":"[all]\nlocalhost ansible_connection=local","project_id":1}' \
+ -d '{"name":"all","ssh_key_id":1,"type":"static","inventory":"[all]\n127.0.0.1 ansible_connection=local","project_id":1}' \
  -o /dev/null)
 
 if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then

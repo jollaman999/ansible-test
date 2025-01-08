@@ -4,7 +4,7 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: localhost
+    ansible_host: 127.0.0.1
     ansible_port: "{{ tunnel_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
@@ -17,7 +17,7 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: localhost
+    ansible_host: 127.0.0.1
     ansible_port: "{{ tunnel_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
@@ -37,7 +37,7 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: localhost
+    ansible_host: 127.0.0.1
     ansible_port: "{{ tunnel_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
@@ -50,7 +50,7 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: localhost
+    ansible_host: 127.0.0.1
     ansible_port: "{{ tunnel_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
@@ -63,7 +63,7 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: localhost
+    ansible_host: 127.0.0.1
     ansible_port: "{{ tunnel_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
