@@ -13,6 +13,25 @@ TARGET_USER="root"
 TARGET_PASSWORD="xxxx"
 TUNNEL_PORT="30000"
 
+# available values: install, remove, update (Default to install when not set)
+INSTALL_METHOD="install"
+
+ENV_JSON=$(cat <<EOF
+{
+    "bastion_host": "${BASTION_HOST}",
+    "bastion_port": "${BASTION_PORT}",
+    "bastion_user": "${BASTION_USER}",
+    "bastion_password": "${BASTION_PASSWORD}",
+    "target_host": "${TARGET_HOST}",
+    "target_port": "${TARGET_PORT}",
+    "target_user": "${TARGET_USER}",
+    "target_password": "${TARGET_PASSWORD}",
+    "tunnel_port": "${TUNNEL_PORT}",
+    "install_method": "${INSTALL_METHOD}"
+}
+EOF
+)
+
 echo "[*] Logging in to semaphore..."
 cnt=0
 while true
@@ -55,32 +74,35 @@ if [ "$TOKEN_ID" = "" ]; then
  exit 1
 fi
 
-echo "[*] Creating project..."
+echo "[*] Running Agent Task..."
 HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  "http://$SERVER_ADDRESS:$SERVER_PORT/api/project/1/tasks" \
  -H 'accept: application/json' \
  -H 'Content-Type: application/json' \
  -H "Authorization: Bearer $TOKEN_ID" \
- -d '{
+ --data-raw '{
   "template_id": 1,
   "params": {},
-  "environment": "{
-    \"bastion_host\":\"$BASTION_HOST\",
-    \"bastion_port\":\"$BASTION_PORT\",
-    \"bastion_user\":\"$BASTION_USER\",
-    \"bastion_password\":\"$BASTION_PASSWORD\",
-    \"target_host\":\"$TARGET_HOST\",
-    \"target_port\":\"$TARGET_PORT\",
-    \"target_user\":\"$TARGET_USER\",
-    \"target_password\":\"$TARGET_PASSWORD\",
-    \"tunnel_port\":\"$TUNNEL_PORT\"
-  }",
+  "environment": "'"$(echo $ENV_JSON | sed 's/"/\\"/g')"'",
   "secret": "{}",
   "project_id": 1
   }' \
  -o /dev/null)
 
 if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
- echo "[!] ERROR: Failed to create project! Status code: $HTTP_STATUS"
+ echo "[!] ERROR: Failed to run agent task! Status code: $HTTP_STATUS"
+ exit 1
+fi
+
+echo "[*] Deleting token..."
+HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'DELETE' \
+ "http://$SERVER_ADDRESS:$SERVER_PORT/api/user/tokens/$TOKEN_ID" \
+ -H 'accept: application/json' \
+ -H 'Content-Type: application/json' \
+ -H "Authorization: Bearer $TOKEN_ID" \
+ -o /dev/null)
+
+if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
+ echo "[!] ERROR: Failed to delete token! Status code: $HTTP_STATUS"
  exit 1
 fi
