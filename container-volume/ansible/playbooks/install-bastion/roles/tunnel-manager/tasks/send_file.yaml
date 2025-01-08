@@ -13,11 +13,11 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
-    ansible_user: "{{ target_user }}"
-    ansible_password: "{{ target_password }}"
-    ansible_become_password: "{{ target_password }}"
+    ansible_host: "{{ bastion_host }}"
+    ansible_port: "{{ bastion_port }}"
+    ansible_user: "{{ bastion_user }}"
+    ansible_password: "{{ bastion_password }}"
+    ansible_become_password: "{{ bastion_password }}"
   raw: "{{ item }}"
   register: result
   loop: "{{ script_content.stdout_lines | reject('match', '^\\s*$') | reject('match', '^\\s*#') | list }}"
@@ -37,9 +37,9 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
-    ansible_user: "{{ target_user }}"
-    ansible_password: "{{ target_password }}"
-    ansible_become_password: "{{ target_password }}"
+    ansible_host: "{{ bastion_host }}"
+    ansible_port: "{{ bastion_port }}"
+    ansible_user: "{{ bastion_user }}"
+    ansible_password: "{{ bastion_password }}"
+    ansible_become_password: "{{ bastion_password }}"
   raw: "mv ~/binary {{ output_file_path }} && chown {{ output_file_chown }} {{ output_file_path }} && chmod {{ output_file_chmod }} {{ output_file_path }}"
