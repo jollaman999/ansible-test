@@ -7,3 +7,8 @@
     - bastion_port
     - bastion_user
     - bastion_password
+    - tunnel_manager_database_host
+    - tunnel_manager_database_port
+    - tunnel_manager_database_user
+    - tunnel_manager_database_password
+    - tunnel_manager_database_name
