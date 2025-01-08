@@ -3,7 +3,8 @@
   vars:
     input_file_path: "{{ role_path }}/bin/tunnel-manager"
     output_file_path: "/usr/bin/tunnel-manager"
-    output_file_chown: "root:root"
+    output_file_owner: "root"
+    output_file_group: "root"
     output_file_chmod: "755"
 
 - name: Generating config.yaml
@@ -17,7 +18,8 @@
   vars:
     input_file_path: "/tmp/config.yaml"
     output_file_path: "/etc/tunnel-manager/config.yaml"
-    output_file_chown: "root:root"
+    output_file_owner: "root"
+    output_file_group: "root"
     output_file_chmod: "644"
 
 - name: Remove temporary config.yaml
@@ -31,7 +33,8 @@
   vars:
     input_file_path: "{{ role_path }}/tunnel-manager/systemd/tunnel-manager.service"
     output_file_path: "/lib/systemd/system/tunnel-manager.service"
-    output_file_chown: "root:root"
+    output_file_owner: "root"
+    output_file_group: "root"
     output_file_chmod: "644"
 
 - name: Reload systemctl daemon

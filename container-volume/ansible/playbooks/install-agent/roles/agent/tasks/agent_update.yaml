@@ -48,7 +48,8 @@
   vars:
     input_file_path: "{{ role_path }}/agent-install-files/bin/cmp-agent"
     output_file_path: "/usr/bin/cmp-agent"
-    output_file_chown: "root:root"
+    output_file_owner: "root"
+    output_file_group: "root"
     output_file_chmod: "755"
 
 - name: Reload systemctl daemon
