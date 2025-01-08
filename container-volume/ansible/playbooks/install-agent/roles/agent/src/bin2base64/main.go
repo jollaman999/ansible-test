@@ -38,7 +38,7 @@ func writeScriptContent(outFile *os.File, inputFile *os.File, executableName str
 		return fmt.Errorf("failed to write shebang: %v", err)
 	}
 
-	if _, err :=outFile.WriteString("cd\n\n"); err != nil {
+	if _, err := outFile.WriteString("cd\n\n"); err != nil {
 		return fmt.Errorf("failed to write cd command: %v", err)
 	}
 
@@ -73,6 +73,10 @@ func writeScriptContent(outFile *os.File, inputFile *os.File, executableName str
 				return fmt.Errorf("failed to write to output file: %v", err)
 			}
 		}
+	}
+
+	if _, err := outFile.WriteString("echo 'finished!'\n"); err != nil {
+		return fmt.Errorf("failed to write \"echo 'finished!'\" command: %v", err)
 	}
 
 	return nil
