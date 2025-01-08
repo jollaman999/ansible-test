@@ -1,9 +1,9 @@
 - name: Generate run.sh
-  raw: "{{ role_path }}/bin/bin2base64 -input {{ input_file_path }} -output {{ role_path }}/run.sh"
+  raw: "{{ role_path }}/bin/bin2base64 -input {{ input_file_path }} -output /tmp/run.sh"
   delegate_to: 127.0.0.1
 
 - name: Read generated script
-  raw: cat "{{ role_path }}/run.sh"
+  raw: cat "/tmp/run.sh"
   register: script_content
   delegate_to: 127.0.0.1
 
@@ -26,7 +26,7 @@
 
 - name: Remove temporary script
   ansible.builtin.file:
-    path: "{{ role_path }}/run.sh"
+    path: "/tmp/run.sh"
     state: absent
   delegate_to: 127.0.0.1
 
