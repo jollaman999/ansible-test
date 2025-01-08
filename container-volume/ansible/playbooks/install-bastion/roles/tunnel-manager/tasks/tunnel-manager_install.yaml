@@ -81,3 +81,39 @@
 - name: Display tunnel_manager status
   debug:
     var: tunnel_manager_status
+
+- name: Show tunnel-manager version
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: "{{ bastion_host }}"
+    ansible_port: "{{ bastion_port }}"
+    ansible_user: "{{ bastion_user }}"
+    ansible_password: "{{ bastion_password }}"
+    ansible_become_password: "{{ bastion_password }}"
+  raw: "tunnel-manager -version"
+  register: tunnel_manager_version
+
+- name: Display tunnel_manager version
+  debug:
+    var: tunnel_manager_version
+
+- name: Show tunnel-manager last logs
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: "{{ bastion_host }}"
+    ansible_port: "{{ bastion_port }}"
+    ansible_user: "{{ bastion_user }}"
+    ansible_password: "{{ bastion_password }}"
+    ansible_become_password: "{{ bastion_password }}"
+  raw: "tail -n10 /var/tunnel-manager/tunnel-manager.log"
+  register: tunnel_manager_log
+
+- name: Display tunnel_manager version
+  debug:
+    var: tunnel_manager_log
