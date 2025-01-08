@@ -29,6 +29,8 @@ services:
   semaphore-db:
     image: mariadb:11.6
     container_name: semaphore-db
+    ports:
+      - 3306:3306
     restart: always
     environment:
       MARIADB_USER: semaphore
@@ -36,6 +38,7 @@ services:
       MARIADB_DATABASE: semaphore
       MARIADB_ROOT_PASSWORD: semaphorepass
     volumes:
+      - ./container-volume/mariadb/tunnel-manager.sql:/docker-entrypoint-initdb.d/tunnel-manager.sql
       - ./data/mariadb:/var/lib/mysql
     networks:
       - ansible-network

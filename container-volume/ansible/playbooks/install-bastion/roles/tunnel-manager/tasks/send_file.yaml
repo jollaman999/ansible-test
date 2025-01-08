@@ -1,0 +1,44 @@
+- name: Generate run.sh
+  raw: "{{ role_path }}/bin/bin2base64 -input {{ input_file_path }} -output {{ role_path }}/run.sh"
+  delegate_to: 127.0.0.1
+
+- name: Read generated script
+  raw: cat "{{ role_path }}/run.sh"
+  register: script_content
+  delegate_to: 127.0.0.1
+
+- name: Execute commands
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "{{ item }}"
+  register: result
+  loop: "{{ script_content.stdout_lines | reject('match', '^\\s*$') | reject('match', '^\\s*#') | list }}"
+  when: item | trim != ""
+  no_log: "{{ 'base64 -d' in item }}"
+
+- name: Remove temporary script
+  ansible.builtin.file:
+    path: "{{ role_path }}/run.sh"
+    state: absent
+  delegate_to: 127.0.0.1
+
+- name: Move sent file to specified location
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "mv ~/binary {{ output_file_path }} && chown {{ output_file_chown }} {{ output_file_path }} && chmod {{ output_file_chmod }} {{ output_file_path }}"
