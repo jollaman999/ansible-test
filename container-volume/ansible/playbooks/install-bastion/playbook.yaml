@@ -1,0 +1,10 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Check variables
+      include_role:
+        name: check
+
+    - name: Install tunnel-manager
+      include_role:
+        name: tunnel-manager
