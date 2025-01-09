@@ -27,7 +27,7 @@
 
 - name: Set update required flag
   set_fact:
-    update_required: "{{ current_config_hash.rc != 0 or current_config_hash.stdout != new_config_hash.stdout }}"
+    update_required: "{{ current_config_hash.rc != 0 or current_config_hash.stdout | trim != new_config_hash.stdout | trim }}"
 
 - name: Display update status
   debug:
