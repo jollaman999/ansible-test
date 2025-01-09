@@ -1,0 +1,11 @@
+bastion_host: "192.168.110.229"
+bastion_port: 22
+bastion_user: "root"
+bastion_password: "xxxx"
+target_host: "10.0.0.164"
+target_port: 22
+target_user: "root"
+target_password: "xxxx"
+tunnel_port: 30000
+
+agent_config_path: /etc/cmp-agent/config.yaml

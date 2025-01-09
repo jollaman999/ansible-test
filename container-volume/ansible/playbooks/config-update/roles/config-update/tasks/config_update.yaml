@@ -1,0 +1,124 @@
+- name: Create temporary config content
+  copy:
+    content: "{{ agent_config_content | b64decode }}"
+    dest: "/tmp/new_agent_config"
+    mode: "0644"
+  delegate_to: 127.0.0.1
+
+- name: Get current config file hash
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "md5sum {{ agent_config_path }} | awk '{print $1}'"
+  register: current_config_hash
+  ignore_errors: true
+
+- name: Get new config file hash
+  raw: "md5sum /tmp/new_agent_config | awk '{print $1}'"
+  delegate_to: 127.0.0.1
+  register: new_config_hash
+
+- name: Set update required flag
+  set_fact:
+    update_required: "{{ current_config_hash.rc != 0 or current_config_hash.stdout != new_config_hash.stdout }}"
+
+- name: Display update status
+  debug:
+    msg: "Configuration update is {{ 'required' if update_required else 'not required' }}"
+
+- name: Get config directory path
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  set_fact:
+    config_directory_path: "{{ agent_config_path | dirname }}"
+  when: update_required
+
+- name: Create directory if not exist
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "mkdir -p {{ config_directory_path }}"
+  when: update_required
+
+- name: Backup current config
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "cp {{ agent_config_path }} {{ agent_config_path }}.bak"
+  when: update_required and current_config_hash.rc == 0
+  ignore_errors: true
+
+- name: Copy new config to target
+  include_tasks: send_file.yaml
+  vars:
+    input_file_path: "/tmp/new_agent_config"
+    output_file_path: "{{ agent_config_path }}"
+    output_file_owner: "root"
+    output_file_group: "root"
+    output_file_chmod: "644"
+  when: update_required
+
+- name: Restart agent service
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl restart cmp-agent"
+  when: update_required
+
+- name: Check agent status
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "systemctl status --no-pager cmp-agent"
+  register: agent_status
+  failed_when: agent_status.rc not in [0, 3]
+  when: update_required
+
+- name: Cleanup temporary config file
+  file:
+    path: "/tmp/new_agent_config"
+    state: absent
+  delegate_to: 127.0.0.1

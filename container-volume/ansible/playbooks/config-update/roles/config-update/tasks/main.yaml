@@ -1,0 +1,2 @@
+- name: Run config update tasks
+  include_tasks: config_update.yaml

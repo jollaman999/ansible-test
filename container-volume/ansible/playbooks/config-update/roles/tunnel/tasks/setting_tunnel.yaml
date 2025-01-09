@@ -1,0 +1,28 @@
+- name: Kill previous tunnel port
+  shell: |
+    pkill -f "ssh.*{{ tunnel_port }}:{{ target_host }}:{{ target_port }}.*{{ bastion_host }}" || true
+  ignore_errors: true
+  delegate_to: 127.0.0.1
+
+- name: Setting SSH tunnel
+  shell: |
+    sshpass -p '{{ bastion_password }}' ssh -4 -fnNT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -L {{ tunnel_port }}:{{ target_host }}:{{ target_port }} -p {{ bastion_port }} {{ bastion_user }}@{{ bastion_host }}
+  delegate_to: 127.0.0.1
+  async: 300
+  poll: 0
+
+- name: Check tunnel status
+  wait_for:
+    host: localhost
+    port: "{{ tunnel_port }}"
+    state: started
+    timeout: 5
+  delegate_to: 127.0.0.1
+
+- name: Print tunnel information
+  debug:
+    msg:
+      - "SSH tunnel has been established successfully"
+      - "Local port: {{ tunnel_port }}"
+      - "Target host: {{ target_host }}"
+      - "Connection command: ssh -p {{ tunnel_port }} {{ target_user }}@localhost"
