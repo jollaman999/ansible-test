@@ -43,6 +43,41 @@ services:
     networks:
       - ansible-network
 
+  test-influxdb:
+    image: influxdb:1.8
+    container_name: test-influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    environment:
+      - INFLUXDB_USER=cmp-agent
+      - INFLUXDB_PASSWORD=cmp-agent
+      - INFLUXDB_DB="cmp"
+    volumes:
+      - ./data/influxdb/config:/etc/influxdb
+      - ./data/influxdb/var/lib/influxdb:/root/.influxdb
+    networks:
+      - influxdb-network
+
+  test-chronograf:
+    image: chronograf:1.9.4
+    container_name: test-chronograf
+    restart: always
+    ports:
+      - 8888:8888
+    environment:
+      - INFLUXDB_URL=http://test-influxdb:8086
+      - INFLUXDB_USERNAME=cmp-agent
+      - INFLUXDB_PASSWORD=cmp-agent
+    volumes:
+      - ./data/chronograf:/var/lib/chronograf
+    networks:
+      - influxdb-network
+    depends_on:
+      - test-influxdb
+
 networks:
   ansible-network:
     name: ansible-network
+  influxdb-network:
+    name: influxdb-network
