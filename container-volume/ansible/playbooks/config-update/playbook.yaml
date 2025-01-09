@@ -15,3 +15,9 @@
     - name: Config Update Operation
       include_role:
         name: config-update
+
+    - name: Kill previous tunnel port
+      shell: |
+        pkill -f "ssh.*{{ tunnel_port }}:{{ target_host }}:{{ target_port }}.*{{ bastion_host }}" || true
+      ignore_errors: true
+      delegate_to: 127.0.0.1

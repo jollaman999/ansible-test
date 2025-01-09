@@ -6,7 +6,13 @@
 
 - name: Setting SSH tunnel
   shell: |
-    sshpass -p '{{ bastion_password }}' ssh -4 -fnNT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -L {{ tunnel_port }}:{{ target_host }}:{{ target_port }} -p {{ bastion_port }} {{ bastion_user }}@{{ bastion_host }}
+    sshpass -p '{{ bastion_password }}' ssh -4 -fnNT \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    -o ExitOnForwardFailure=yes \
+    -o ServerAliveInterval=5 \
+    -L {{ tunnel_port }}:{{ target_host }}:{{ target_port }} \
+    -p {{ bastion_port }} {{ bastion_user }}@{{ bastion_host }}
   delegate_to: 127.0.0.1
   async: 300
   poll: 0
