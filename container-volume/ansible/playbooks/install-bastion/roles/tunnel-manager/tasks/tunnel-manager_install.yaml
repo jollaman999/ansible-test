@@ -61,7 +61,7 @@
     ansible_user: "{{ bastion_user }}"
     ansible_password: "{{ bastion_password }}"
     ansible_become_password: "{{ bastion_password }}"
-  raw: "systemctl restart tunnel-manager"
+  shell: "systemctl restart tunnel-manager"
 
 - name: Run tunnel-manager status command
   become: true
