@@ -11,10 +11,10 @@
  omit_hostname = false
 
 [[outputs.influxdb]]
- urls = ["http://localhost:8086"]
- database = "telegraf"
- username = "telegraf"
- password = "telegraf123"
+ urls = ["http://127.0.0.1:18086"]
+ database = "cmp"
+ username = "cmp-agent"
+ password = "cmp-agent"
  retention_policy = ""
  write_consistency = "any"
  timeout = "5s"
