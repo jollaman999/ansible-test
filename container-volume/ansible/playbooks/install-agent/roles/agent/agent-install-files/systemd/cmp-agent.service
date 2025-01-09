@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/bin/cmp-agent
+ExecStart=/usr/bin/cmp-agent --config /etc/cmp-agent/config
 ExecStop=/usr/bin/killall cmp-agent
 Restart=on-failure
 RestartPreventExitStatus=100

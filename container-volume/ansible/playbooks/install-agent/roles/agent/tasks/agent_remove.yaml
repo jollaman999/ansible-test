@@ -25,7 +25,6 @@
   raw: "systemctl status --no-pager cmp-agent"
   register: agent_status
   failed_when: agent_status.rc not in [0, 3]
-  
 
 - name: Display Agent status
   debug:
@@ -43,6 +42,19 @@
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
   raw: "rm -f /usr/bin/cmp-agent"
+
+- name: Remove Agent config folder
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  raw: "mkdir -p /etc/cmp-agent/"
 
 - name: Remove Agent service file
   become: true

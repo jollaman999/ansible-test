@@ -8,4 +8,4 @@ target_user: "root"
 target_password: "xxxx"
 tunnel_port: 30000
 
-agent_config_path: /etc/cmp-agent/config.yaml
+agent_config_path: /etc/cmp-agent/config

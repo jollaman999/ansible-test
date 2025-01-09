@@ -117,6 +117,10 @@
   failed_when: agent_status.rc not in [0, 3]
   when: update_required
 
+- name: Display Agent status
+  debug:
+    var: agent_status
+
 - name: Cleanup temporary config file
   file:
     path: "/tmp/new_agent_config"
