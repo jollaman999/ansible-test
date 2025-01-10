@@ -13,3 +13,6 @@ RUN apk add iproute2
 RUN echo "semaphore ALL = NOPASSWD: ALL" >> /etc/sudoers
 
 USER semaphore
+RUN mkdir -p /home/semaphore/.ssh
+RUN chmod 2700 /home/semaphore/.ssh
+RUN ln -s /dev/null /home/semaphore/.ssh/known_hosts
