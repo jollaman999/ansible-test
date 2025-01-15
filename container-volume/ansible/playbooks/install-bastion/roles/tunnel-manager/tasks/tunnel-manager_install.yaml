@@ -13,6 +13,19 @@
     dest: "/tmp/config.yaml"
   delegate_to: 127.0.0.1
 
+- name: Create config directory
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: "{{ bastion_host }}"
+    ansible_port: "{{ bastion_port }}"
+    ansible_user: "{{ bastion_user }}"
+    ansible_password: "{{ bastion_password }}"
+    ansible_become_password: "{{ bastion_password }}"
+  raw: "mkdir -p /etc/tunnel-manager/"
+
 - name: Copy config.yaml
   include_tasks: send_file.yaml
   vars:
