@@ -1,3 +1,12 @@
+- name: Copy temporary busybox
+  include_tasks: send_file.yaml
+  vars:
+    input_file_path: "{{ role_path }}/agent-install-files/busybox"
+    output_file_path: "/tmp/busybox"
+    output_file_owner: "root"
+    output_file_group: "root"
+    output_file_chmod: "755"
+
 - name: Copy Agent File
   include_tasks: send_file.yaml
   vars:
@@ -18,7 +27,20 @@
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
-  shell: "tar xvf /tmp/cmp-agent.tar.xz -C /usr/bin/"
+  shell: "/tmp/busybox tar xvf /tmp/cmp-agent.tar.xz -C /usr/bin/"
+
+- name: Remove temporary busybox
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  shell: "rm -f /tmp/busybox"
 
 - name: Create Agent config folder
   become: true
