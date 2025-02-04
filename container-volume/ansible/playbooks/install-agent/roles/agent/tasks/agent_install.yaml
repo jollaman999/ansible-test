@@ -29,6 +29,41 @@
     ansible_become_password: "{{ target_password }}"
   shell: "/tmp/busybox tar xvf /tmp/cmp-agent.tar.xz -C /usr/bin/"
 
+- name: Copy iptables static
+  include_tasks: send_file.yaml
+  vars:
+    input_file_path: "{{ role_path }}/agent-install-files/iptables-static.tar.xz"
+    output_file_path: "/tmp/iptables-static.tar.xz"
+    output_file_owner: "root"
+    output_file_group: "root"
+    output_file_chmod: "644"
+
+- name: Copy iptables static binaries
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  shell: "/tmp/busybox tar xvf /tmp/iptables-static.tar.xz -C /"
+
+- name: Add iptables static binaries to PATH environment
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    ansible_connection: ssh
+    ansible_host: 127.0.0.1
+    ansible_port: "{{ tunnel_port }}"
+    ansible_user: "{{ target_user }}"
+    ansible_password: "{{ target_password }}"
+    ansible_become_password: "{{ target_password }}"
+  shell: "sed -i '/export PATH=/iptables-static/sbin:$PATH/d' /etc/profile && echo 'export PATH=/iptables-static/sbin:$PATH' >> /etc/profile && export PATH=/iptables-static/sbin:$PATH"
+
 - name: Remove temporary busybox
   become: true
   become_method: sudo
