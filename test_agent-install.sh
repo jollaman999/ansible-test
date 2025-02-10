@@ -3,30 +3,20 @@
 SERVER_ADDRESS="192.168.110.14"
 SERVER_PORT="3000"
 
-BASTION_HOST="192.168.110.229"
-BASTION_PORT="22"
-BASTION_USER="root"
-BASTION_PASSWORD="xxxx"
 TARGET_HOST="10.0.0.164"
 TARGET_PORT="22"
 TARGET_USER="root"
 TARGET_PASSWORD="xxxx"
-TUNNEL_PORT="30000"
 
 # available values: install, remove, update (Default to install when not set)
 INSTALL_METHOD="install"
 
 ENV_JSON=$(cat <<EOF
 {
-    "bastion_host": "${BASTION_HOST}",
-    "bastion_port": "${BASTION_PORT}",
-    "bastion_user": "${BASTION_USER}",
-    "bastion_password": "${BASTION_PASSWORD}",
     "target_host": "${TARGET_HOST}",
     "target_port": "${TARGET_PORT}",
     "target_user": "${TARGET_USER}",
     "target_password": "${TARGET_PASSWORD}",
-    "tunnel_port": "${TUNNEL_PORT}",
     "install_method": "${INSTALL_METHOD}"
 }
 EOF

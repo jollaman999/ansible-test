@@ -120,25 +120,59 @@ HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  -H 'accept: application/json' \
  -H 'Content-Type: application/json' \
  -H "Authorization: Bearer $TOKEN_ID" \
- -d '{"type":"","playbook":"playbook.yaml","inventory_id":1,"repository_id":1,"environment_id":1,"name":"install-agent","survey_vars":[{"values":[],"name":"bastion_host","title":"bastion_host","required":true,"type":""},{"values":[],"name":"bastion_port","title":"bastion_port","type":"","required":true},{"values":[],"name":"bastion_user","title":"bastion_user","type":"","required":true},{"values":[],"name":"bastion_password","title":"bastion_password","type":"","required":true},{"values":[],"name":"target_host","title":"target_host","type":"","required":true},{"values":[],"name":"target_port","title":"target_port","description":"","required":true,"type":""},{"values":[],"name":"target_user","title":"target_user","type":"","required":true},{"values":[],"name":"target_password","title":"target_password","type":"","required":true},{"values":[],"name":"tunnel_port","title":"tunnel_port","type":"","required":true},{"values":[],"name":"install_method","title":"install_method","type":""}],"app":"ansible","arguments":"[]","project_id":1}' \
+ -d '
+ {
+  "type": "",
+  "playbook": "playbook.yaml",
+  "inventory_id": 1,
+  "repository_id": 1,
+  "environment_id": 1,
+  "name": "install-agent",
+  "survey_vars": [
+    {
+      "values": [],
+      "name": "target_host",
+      "title": "target_host",
+      "type": "",
+      "required": true
+    },
+    {
+      "values": [],
+      "name": "target_port",
+      "title": "target_port",
+      "description": "",
+      "required": true,
+      "type": ""
+    },
+    {
+      "values": [],
+      "name": "target_user",
+      "title": "target_user",
+      "type": "",
+      "required": true
+    },
+    {
+      "values": [],
+      "name": "target_password",
+      "title": "target_password",
+      "type": "",
+      "required": true
+    },
+    {
+      "values": [],
+      "name": "install_method",
+      "title": "install_method",
+      "type": ""
+    }
+  ],
+  "app": "ansible",
+  "arguments": "[]",
+  "project_id": 1
+}' \
  -o /dev/null)
 
 if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
  echo "[!] ERROR: Failed to create agent template! Status code: $HTTP_STATUS"
- exit 1
-fi
-
-echo "[*] Creating Bastion template..."
-HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
- 'http://127.0.0.1:3000/api/project/1/templates' \
- -H 'accept: application/json' \
- -H 'Content-Type: application/json' \
- -H "Authorization: Bearer $TOKEN_ID" \
- -d '{"type":"","name":"install-bastion","playbook":"playbook.yaml","inventory_id":1,"repository_id":2,"environment_id":1,"survey_vars":[{"values":[],"name":"bastion_host","title":"bastion_host","required":true},{"values":[],"name":"bastion_port","title":"bastion_port","required":true},{"values":[],"name":"bastion_user","title":"bastion_user","required":true},{"values":[],"name":"bastion_password","title":"bastion_password","required":true},{"values":[],"name":"tunnel_manager_database_host","title":"tunnel_manager_database_host","required":true},{"values":[],"name":"tunnel_manager_database_port","title":"tunnel_manager_database_port","required":true},{"values":[],"name":"tunnel_manager_database_user","title":"tunnel_manager_database_user","required":true},{"values":[],"name":"tunnel_manager_database_password","title":"tunnel_manager_database_password","required":true},{"values":[],"name":"tunnel_manager_database_name","title":"tunnel_manager_database_name","required":true}],"app":"ansible","arguments":"[]","project_id":1}' \
- -o /dev/null)
-
-if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then
- echo "[!] ERROR: Failed to create bastion template! Status code: $HTTP_STATUS"
  exit 1
 fi
 
@@ -148,7 +182,49 @@ HTTP_STATUS=$(curl -s -w "%{http_code}" -b semaphore-cookie -X 'POST' \
  -H 'accept: application/json' \
  -H 'Content-Type: application/json' \
  -H "Authorization: Bearer $TOKEN_ID" \
- -d '{"type":"","name":"config-update","playbook":"playbook.yaml","inventory_id":1,"repository_id":3,"environment_id":1,"survey_vars":[{"values":[],"name":"bastion_host","title":"bastion_host","required":true},{"values":[],"name":"bastion_port","title":"bastion_port","required":true},{"values":[],"name":"bastion_user","title":"bastion_user","required":true},{"values":[],"name":"bastion_password","title":"bastion_password","required":true}],"app":"ansible","arguments":"[]","project_id":1}' \
+ -d '
+ {
+  "type": "",
+  "playbook": "playbook.yaml",
+  "inventory_id": 1,
+  "repository_id": 3,
+  "environment_id": 1,
+  "name": "config-update",
+  "survey_vars": [
+    {
+      "values": [],
+      "name": "target_host",
+      "title": "target_host",
+      "type": "",
+      "required": true
+    },
+    {
+      "values": [],
+      "name": "target_port",
+      "title": "target_port",
+      "description": "",
+      "required": true,
+      "type": ""
+    },
+    {
+      "values": [],
+      "name": "target_user",
+      "title": "target_user",
+      "type": "",
+      "required": true
+    },
+    {
+      "values": [],
+      "name": "target_password",
+      "title": "target_password",
+      "type": "",
+      "required": true
+    }
+  ],
+  "app": "ansible",
+  "arguments": "[]",
+  "project_id": 1
+}' \
  -o /dev/null)
 
 if [[ ! $HTTP_STATUS =~ ^2[0-9][0-9]$ ]]; then

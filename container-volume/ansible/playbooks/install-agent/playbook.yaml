@@ -8,16 +8,6 @@
       include_role:
         name: check
 
-    - name: Setup SSH Tunnel
-      include_role:
-        name: tunnel
-
     - name: Agent Operation
       include_role:
         name: agent
-
-    - name: Kill previous tunnel port
-      shell: |
-        pkill -f "ssh.*-L.*{{ tunnel_port }}*" || true
-      ignore_errors: true
-      delegate_to: 127.0.0.1

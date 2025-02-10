@@ -11,8 +11,8 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
+    ansible_host: "{{ target_host }}"
+    ansible_port: "{{ target_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
@@ -39,8 +39,8 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
+    ansible_host: "{{ target_host }}"
+    ansible_port: "{{ target_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
@@ -54,8 +54,8 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
+    ansible_host: "{{ target_host }}"
+    ansible_port: "{{ target_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
@@ -68,8 +68,8 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
+    ansible_host: "{{ target_host }}"
+    ansible_port: "{{ target_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
@@ -93,8 +93,8 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
+    ansible_host: "{{ target_host }}"
+    ansible_port: "{{ target_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
@@ -107,8 +107,8 @@
   become_user: root
   vars:
     ansible_connection: ssh
-    ansible_host: 127.0.0.1
-    ansible_port: "{{ tunnel_port }}"
+    ansible_host: "{{ target_host }}"
+    ansible_port: "{{ target_port }}"
     ansible_user: "{{ target_user }}"
     ansible_password: "{{ target_password }}"
     ansible_become_password: "{{ target_password }}"
